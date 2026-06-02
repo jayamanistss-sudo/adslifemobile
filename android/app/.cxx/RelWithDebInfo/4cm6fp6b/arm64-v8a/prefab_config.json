@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "prefabPath": "/home/ptl024/.gradle/caches/modules-2/files-2.1/com.google.prefab/cli/2.1.0/aa32fec809c44fa531f01dcfb739b5b3304d3050/cli-2.1.0-all.jar",
+  "packages": [
+    "/home/ptl024/Desktop/msj/ads/AdsLifeApp/node_modules/react-native-reanimated/android/build/intermediates/prefab_package/release/prefab",
+    "/home/ptl024/Desktop/msj/ads/AdsLifeApp/node_modules/react-native-worklets/android/build/intermediates/prefab_package/release/prefab",
+    "/home/ptl024/.gradle/caches/9.3.1/transforms/1a811400cc0489cd26373fbd36604dfc/transformed/react-android-0.85.3-release/prefab",
+    "/home/ptl024/.gradle/caches/9.3.1/transforms/948bc2767943b0aed6251e9b86208553/transformed/hermes-android-250829098.0.10-release/prefab",
+    "/home/ptl024/.gradle/caches/9.3.1/transforms/3c01aea05d2737e987399f1309ae090e/transformed/fbjni-0.7.0/prefab"
+  ]
+}
