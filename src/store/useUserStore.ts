@@ -20,40 +20,79 @@ export const useUserStore = create<UserState>((set) => ({
 
   hydrate: async () => {
     try {
-      const [userJson, token] = await AsyncStorage.multiGet([
-        'adslife_user',
-        'adslife_token',
-      ]);
-      const user = userJson[1] ? JSON.parse(userJson[1]) : null;
-      const tk   = token[1] ?? null;
+      const userJson = await AsyncStorage.getItem('adslife_user');
+      const token = await AsyncStorage.getItem('adslife_token');
 
-      // Check token not expired
+      const user = userJson ? JSON.parse(userJson) : null;
+      const tk = token ?? null;
+
       let valid = false;
+
       if (tk) {
         try {
-          const base64 = tk.split('.')[1].replaceAll('-', '+').replaceAll('_', '/');
+          const base64 = tk
+            .split('.')[1]
+            .replace(/-/g, '+')
+            .replace(/_/g, '/');
+
           const payload = JSON.parse(atob(base64));
+
           valid = payload.exp * 1000 > Date.now();
-        } catch { valid = false; }
+        } catch (e) {
+          valid = false;
+        }
       }
 
-      set({ user: valid ? user : null, token: valid ? tk : null,
-            isAuthenticated: valid && !!user, hydrated: true });
-    } catch {
-      set({ hydrated: true });
+      set({
+        user: valid ? user : null,
+        token: valid ? tk : null,
+        isAuthenticated: valid && !!user,
+        hydrated: true,
+      });
+    } catch (e) {
+      console.log('hydrate error', e);
+
+      set({
+        hydrated: true,
+      });
     }
   },
 
   setUser: async (user, token) => {
-    await AsyncStorage.multiSet([
-      ['adslife_user', JSON.stringify(user)],
-      ['adslife_token', token],
-    ]);
-    set({ user, token, isAuthenticated: true });
+    try {
+      await AsyncStorage.setItem(
+        'adslife_user',
+        JSON.stringify(user)
+      );
+
+      await AsyncStorage.setItem(
+        'adslife_token',
+        token
+      );
+
+      set({
+        user,
+        token,
+        isAuthenticated: true,
+      });
+    } catch (e) {
+      console.log('setUser error', e);
+      throw e;
+    }
   },
 
   logout: async () => {
-    await AsyncStorage.multiRemove(['adslife_user', 'adslife_token']);
-    set({ user: null, token: null, isAuthenticated: false });
+    try {
+      await AsyncStorage.removeItem('adslife_user');
+      await AsyncStorage.removeItem('adslife_token');
+
+      set({
+        user: null,
+        token: null,
+        isAuthenticated: false,
+      });
+    } catch (e) {
+      console.log('logout error', e);
+    }
   },
 }));

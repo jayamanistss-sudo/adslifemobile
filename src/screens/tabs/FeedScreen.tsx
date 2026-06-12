@@ -25,6 +25,7 @@ export default function Feed() {
   const navigation = useNavigation();
   const { user } = useUserStore();
   const { forYouOffers, trendingOffers, loading, loadForYou, loadTrending, reset } = useFeedStore();
+  console.log("Checkofferssection", forYouOffers,trendingOffers,loading)
 
   const [tab, setTab]               = useState<'forYou' | 'trending'>('forYou');
   const [activeCategory, setCategory] = useState<string | null>(null);

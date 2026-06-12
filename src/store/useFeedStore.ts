@@ -46,23 +46,61 @@ export const useFeedStore = create<FeedState>((set, get) => ({
     } catch { set({ loading: false }); }
   },
 
-  loadForYou: async (userId, lat, lng, reset = false) => {
-    if (get().loading) return;
-    const page = reset ? 1 : get().page;
-    set({ loading: true });
-    try {
-      const res = await api.get(endpoints.forYou(userId, lat, lng) + `&page=${page}&limit=20`);
-      if (res.data.success) {
-        const offers = (res.data.data?.offers ?? res.data.data ?? []).map(mapOffer);
-        set((s) => ({
-          forYouOffers: reset ? offers : [...s.forYouOffers, ...offers],
-          hasMore: offers.length === 20,
-          page: page + 1,
-          loading: false,
-        }));
-      }
-    } catch { set({ loading: false }); }
-  },
+loadForYou: async (userId, lat, lng, reset = false) => {
+  if (get().loading) return;
+
+  const page = reset ? 1 : get().page;
+
+  set({ loading: true });
+
+  try {
+    console.log("loadForYou called");
+
+
+    const url = endpoints.feed(
+      userId,
+      lat ?? 13.0827,
+      lng ?? 80.2707,
+      page,
+      20
+    );
+
+    console.log("URL", url);
+
+    const res = await api.get(url);
+
+    console.log(
+      "FORYOU RESPONSE",
+      JSON.stringify(res.data, null, 2)
+    );
+
+    if (res.data.success) {
+      const rawOffers = Array.isArray(res.data.data?.offers)
+        ? res.data.data.offers
+        : Array.isArray(res.data.data)
+        ? res.data.data
+        : [];
+
+      const offers = rawOffers.map(mapOffer);
+
+      console.log("OFFERS COUNT", offers.length);
+
+      set((s) => ({
+        forYouOffers: reset
+          ? offers
+          : [...s.forYouOffers, ...offers],
+        hasMore: offers.length === 20,
+        page: page + 1,
+        loading: false,
+      }));
+    } else {
+      set({ loading: false });
+    }
+  } catch (e) {
+    console.log("loadForYou Error", e);
+    set({ loading: false });
+  }
+},
 
   reset: () => set({ forYouOffers: [], trendingOffers: [], page: 1, hasMore: true }),
 }));

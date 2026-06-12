@@ -16,28 +16,59 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showPw, setShowPw]     = useState(false);
   const [loading, setLoading]   = useState(false);
-
   const handleLogin = async () => {
-    if (!email.trim() || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
-    setLoading(true);
     try {
-      const res = await api.post(endpoints.login, { email: email.trim(), password });
+      console.log("STEP 1");
+
+      const res = await api.post(endpoints.login, {
+        email: email.trim(),
+        password,
+      });
+
+      console.log("STEP 2");
+      console.log(JSON.stringify(res.data, null, 2));
+
       if (res.data.success) {
+        console.log("STEP 3");
+
         const { user, token } = res.data.data;
-        await setUser({
-          id: user.id, name: user.name, email: user.email, role: user.role,
-          city: user.city, avatar_url: user.avatar_url,
-          streak_days: Number(user.streak_days) || 0,
-        }, token);
-        navigation.reset({index:0,routes:[{name:'Main'}]});
+
+        console.log("STEP 4", user);
+        console.log("STEP 5", token);
+
+        await setUser(
+          {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            city: user.city,
+            avatar_url: user.avatar_url,
+            streak_days: Number(user.streak_days) || 0,
+          },
+          token
+        );
+
+        console.log("STEP 6");
+
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Main" }],
+        });
+
+        console.log("STEP 7");
       }
-    } catch (err: any) {
-      Alert.alert('Login Failed', err.response?.data?.error ?? 'Invalid credentials');
-    } finally { setLoading(false); }
+    } catch (err) {
+      console.log("LOGIN ERROR =>", err);
+      console.log("LOGIN ERROR STRING =>", JSON.stringify(err, null, 2));
+    }
   };
+
+console.log("setUser =", setUser);
+console.log("api =", api);
+console.log("api.post =", api?.post);
+console.log("navigation =", navigation);
+console.log("navigation.reset =", navigation?.reset);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
