@@ -41,7 +41,7 @@ export default function Feed() {
 
   useEffect(() => {
     load();
-    api.get(endpoints.categoriesList(true))
+   api.get(endpoints.categoriesList())
       .then((r) => { if (r.data.success) setCategories(r.data.data ?? []); })
       .catch(() => {});
   }, []);

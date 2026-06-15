@@ -1,5 +1,7 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-;
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Colors } from '../constants/colors';
 import { useSavedStore } from '../store/useSavedStore';
@@ -17,8 +19,10 @@ function timeLeft(until?: string): string {
   const hrs = Math.floor(diff / 3600000);
   return hrs > 0 ? `${hrs}h left` : 'Ending soon';
 }
-
+type NavigationProp =
+  NativeStackNavigationProp<RootStackParamList>;
 export default function OfferCard({ offer, compact }: Props) {
+    const navigation = useNavigation<NavigationProp>();
   const { isSaved, save, unsave } = useSavedStore();
   const { user } = useUserStore();
   const saved = isSaved(offer.id);
@@ -29,6 +33,7 @@ export default function OfferCard({ offer, compact }: Props) {
     if (!user) { navigation.navigate('Auth' as never); return; }
     saved ? unsave(offer.id) : save(offer.id);
   };
+  console.log("CheckImageLog",offer)
 
   return (
     <TouchableOpacity
@@ -38,8 +43,8 @@ export default function OfferCard({ offer, compact }: Props) {
     >
       {/* Image */}
       <View style={styles.imageBox}>
-        {offer.imageUrl
-          ? <Image source={{ uri: offer.imageUrl }} style={styles.image} resizeMode="cover" />
+        {offer.image_url
+          ? <Image source={{ uri: offer.image_url }} style={styles.image} resizeMode="cover" />
           : <View style={styles.imagePlaceholder}>
               <Ionicons name="pricetag-outline" size={32} color={Colors.textMuted} />
             </View>
